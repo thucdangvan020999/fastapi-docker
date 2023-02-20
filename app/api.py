@@ -6,7 +6,7 @@ from http import HTTPStatus
 from typing import Dict
 from datetime import datetime
 from functools import wraps
-from app.schemas import PredictPayload
+from app.schemas import PredictPayloadCourse, PredictPayloadJB, TableScore
 
 
 app = FastAPI(
@@ -15,13 +15,6 @@ app = FastAPI(
     version="0.1",
 )
 
-
-# class TextIn(BaseModel):
-#     text: str
-
-
-# class PredictionOut(BaseModel):
-#     language: str
 
 
 def construct_response(f):
@@ -56,20 +49,13 @@ def _index(request: Request) -> Dict:
     }
     return response
 
-# @app.get("/")
-# def home():
-#     return {"health_check": "OK", "model_version": model_version}
 
-# @app.post("/predict", response_model=PredictionOut)
-# def predict(payload: TextIn):
-#     language = predict_pipeline(payload.text)
-#     return {"language": language}
 
 @app.post("/predict", tags=["Prediction"])
 @construct_response
-def _predict(request: Request, payload: PredictPayload) -> Dict:
+def _predict(request: Request, payload_jd: PredictPayloadCourse, payload_course : PredictPayloadCourse , table :TableScore) -> Dict:
     """Predict tags for a list of texts."""
-    text = str(payload.texts)
+    text = str(payload_jd.texts)
     predictions = predict_pipeline(text)
     response = {
         "message": HTTPStatus.OK.phrase,
